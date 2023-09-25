@@ -1,19 +1,23 @@
--- EXERCISE 3
-CREATE OR REPLACE VIEW Cumulative_number_for_14_days_of_COVID_19_cases_per_100000 AS
-SELECT VW.* FROM (	
-	SELECT 
-		TB.*
-		,ROW_NUMBER() OVER(PARTITION BY TB.country,TB.Indicator ORDER BY TB.country,TB.WFD DESC) AS RN
-	FROM 	
-		(SELECT
-			CASES.*
-			,YK.yw_week_first_day AS WFD
-			,YK.yw_week_last_day AS WLD
-		FROM
-			CASES
-		LEFT JOIN dm_week_to_date AS YK ON (CASES.year_week = YK.year_week)
-		WHERE 
-		CASES.cumulative_count != 0
-		AND indicator = 'cases'
-		) AS TB
-	) AS VW WHERE VW.RN = 1
+-- question 5
+CREATE TABLE vacination (
+	id bigserial not null,
+	country VARCHAR(60),
+	iso_code VARCHAR(20),
+	date date,
+	total_vaccinations BIGINT,
+	people_vaccinated BIGINT,
+	people_fully_vaccinated BIGINT,
+	total_boosters BIGINT,
+	daily_vaccinations_raw BIGINT,
+	daily_vaccinations real,
+	total_vaccinations_per_hundred real,
+	people_vaccinated_per_hundred real,
+	people_fully_vaccinated_per_hundred real,
+	total_boosters_per_hundred real,
+	daily_vaccinations_per_million BIGINT,
+	daily_people_vaccinated BIGINT,
+	daily_people_vaccinated_per_hundred real,
+	update_on timestamp DEFAULT NOW(),
+	
+	CONSTRAINT PK_VCN PRIMARY KEY(id)
+)
